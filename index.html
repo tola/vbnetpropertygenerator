@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VB.NET Class Properties Generator">
+  <meta name="keywords" content="VB, VB.NET, C# to VB converter">
+  <meta name="author" content="Tola">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+  <title>VB.NET Class Property Generator</title>
+</head>
+
+<body>
+  <div class="row my-4 d-flex justify-content-center" x-data="myFunction()">
+    <div class="col-md-10">
+
+      <h4>VB.NET Class Property Generator for .NET 3.5</h4>
+
+      <div id="divHolder" class="mb-3 mt-4">
+        <label for="txtCode" class="form-label">Type Propery and its type below. Seperate them by
+          space. One property and its type per line. When you press "Enter" key, the generator will run.</label>
+        <textarea name="codeInput" cols="15" rows="10" id="txtCode" class="form-control" x-model="inputProp"
+          @keyup.enter="tranform()" placeholder="Property Type"></textarea>
+
+      </div>
+      <div class="mb-3">
+        <label for="txtResult" class="form-label"><strong>Result</strong></label>
+        <textarea name="codeResult" cols="15" rows="10" id="txtResult" class="form-control"
+          x-text="resultProp"></textarea>
+      </div>
+
+      <div class="mb-3" x-init="renderMarked()" x-html="mdText">
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.8.1/cdn.js"
+    integrity="sha512-YkYF4nyC7gM/pP7k1/LzwjBGcogzU3LJMqB7WZVphSpjLWH1sWpjbM7BoLQQ3F8QykzLr1k2Ae+fOrpWa9ge7g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+  <script>
+
+    function isEmptyOrSpaces(str) {
+      return str === null || str.match(/^ *$/) !== null;
+    }
+
+    function myFunction() {
+      let template =
+        'Private _PropertyName As  Type\n' +
+        'Public Property PropertyName() As  Type\n' +
+        '   Get\n' +
+        '       Return _Property \n' +
+        '   End Get \n' +
+        '   Set(ByVal value As  Type)\n' +
+        '       _Property = value\n' +
+        '   End Set\n' +
+        'End Property\n' +
+        '';
+
+      return {
+        inputProp: '',
+        resultProp: '',
+        md: `*I built this little tool as I found myself repetitive typing for VB.NET class property in .NET 3.5. 
+        There's already  [Auto-Implemented Properties](https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/procedures/auto-implemented-properties) for recent version of VB.NET. 
+        This is a simple string manipulation in Javascript. It is not an actual .NET converter.
+        <p>Buit with [AlphineJS](https://alpinejs.dev/) and [Marked](https://marked.js.org/)
+            . There many C# to VB.NET converters such as [this one](https://converter.telerik.com/) but they do not support .NET 3.5.</p><p class="text-muted">តុលា</p>`,
+        mdText: '',
+        renderMarked() {
+          this.mdText = '';
+          this.mdText = marked.parse(this.md);
+        },
+        tranform() {
+
+          let result = [];
+          this.resultProp = '';
+
+          var arrayOfLines = this.inputProp.split('\n');
+          const regProp = /PropertyName/gi;
+          const regType = /Type/gi;
+
+          for (const element of arrayOfLines) {
+            if (!isEmptyOrSpaces(element)) {
+              let l = element.split(' ');
+              let tmp = template
+                .replace(regProp, l[0])
+                .replace(regType, l[1]);
+              result.push(tmp + '\n');
+            }
+          }
+
+          this.resultProp = result.join('');
+
+        },
+      };
+    }
+
+
+
+  </script>
+</body>
+
+</html>
